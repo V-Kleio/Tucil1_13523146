@@ -59,8 +59,16 @@ public class Board {
         return true;
     }
 
-    public void removePiece() {
+    public void removePiece(Piece piece, int startRow, int startCol) {
+        char[][] shape = piece.getShape();
 
+        for (int i = 0; i < piece.getRow(); i++) {
+            for (int j = 0; j < piece.getCol(); j++) {
+                if (shape[i][j] != '.') {
+                    board[startRow + i][startCol + j] = '.';
+                }
+            }
+        }
     }
 
     public boolean isBoardFull() {
