@@ -10,7 +10,7 @@ public class Board {
         this.col = col;
         this.board = new char[row][col];
 
-        // Board is empty (filled with dots)
+        // * Board is empty (filled with dots)
         for (int i = 0; i < row; i++) {
             for (int j = 0; j < col; j++) {
                 board[i][j] = '.';
@@ -30,8 +30,33 @@ public class Board {
         return board;
     }
 
-    public void placePiece() {
+    public boolean placePiece(Piece piece, int startRow, int startCol) {
+        char[][] shape = piece.getShape();
+        
+        // * Check if the piece can be placed in startRow and startCol coordinates
+        for (int i = 0; i < piece.getRow(); i++) {
+            for (int j = 0; j < piece.getCol(); j++) {
+                if (shape[i][j] != '.') {
+                    int boardRow = startRow + i;
+                    int boardCol = startCol + j;
+                    if (boardRow >= row || boardCol >= col || board[boardRow][boardCol] != '.') {
+                        // ! Check out of bounds and overlapped
+                        return false;
+                    }
+                }
+            }
+        }
 
+        // * piece can be placed
+        for (int i = 0; i < piece.getRow(); i++) {
+            for (int j = 0; j < piece.getCol(); j++) {
+                if (shape[i][j] != '.') {
+                    board[startRow + i][startCol + j] = shape[i][j];
+                }
+            }
+        }
+
+        return true;
     }
 
     public void removePiece() {
