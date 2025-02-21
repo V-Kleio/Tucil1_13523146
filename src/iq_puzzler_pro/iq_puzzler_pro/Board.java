@@ -9,6 +9,13 @@ public class Board {
         this.row = row;
         this.col = col;
         this.board = new char[row][col];
+
+        // Board is empty (filled with dots)
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                board[i][j] = '.';
+            }
+        }
     }
 
     public int getRow() {
