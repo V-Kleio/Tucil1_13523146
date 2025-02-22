@@ -14,7 +14,12 @@ public class Solver {
             piecesShapes.add(getUniqueOrientations(p));
         }
 
+        long startTime = System.nanoTime();
         boolean solved = solve(board, piecesShapes, 0);
+        long endTime = System.nanoTime();
+        
+        System.out.println("Waktu pencarian: " + ((endTime - startTime) / 1000000.0) + " ms");
+        System.out.println("Banyak kasus yang ditinjau: " + attempts);
 
         return solved;
     }
