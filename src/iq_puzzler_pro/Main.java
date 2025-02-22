@@ -19,5 +19,13 @@ public class Main {
         } catch (FileNotFoundException e) {
             System.out.println("File Not Found: " + e.getMessage());
         }
+
+        Solver solver = new Solver();
+        if (solver.findSolution(board, pieces)) {
+            board.printBoard();
+            System.out.println("Berhasil anjay tapi belum diwarnain");
+        } else {
+            System.out.println("Gagal anjay kayaknya gak ada solusi");
+        }
     }
 }

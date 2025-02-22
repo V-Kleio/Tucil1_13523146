@@ -1,11 +1,11 @@
 package iq_puzzler_pro;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 public class Solver {
     private int attempts = 0;
 
-    public boolean solve(Board board, List<Piece> pieces) {
+    public boolean findSolution(Board board, List<Piece> pieces) {
         // * Store every piece in a list
         // * for each piece also store all the possible shapes (rotated & mirrored)
         // * Making it list inside a list
@@ -13,6 +13,10 @@ public class Solver {
         for (Piece p : pieces) {
             piecesShapes.add(getUniqueOrientations(p));
         }
+
+        boolean solved = solve(board, piecesShapes, 0);
+
+        return solved;
     }
 
     private List<Piece> getUniqueOrientations(Piece piece) {
@@ -68,5 +72,46 @@ public class Solver {
         }
 
         return false;
+    }
+
+    private boolean solve(Board board, List<List<Piece>> piecesShapes, int index) {
+        // * Index >= piecesShapes, then all pieces have been placed
+        if (index >= piecesShapes.size()) {
+            return true;
+        }
+
+        // * Find empty slot
+        int[] emptySlot = findEmptySlot(board);
+        if (emptySlot == null) {
+            return true; // * No empty slot
+        }
+
+        int emptyRow = emptySlot[0];
+        int emptyCol = emptySlot[1];
+
+        for (Piece p : piecesShapes.get(index)) {
+            attempts++;
+            if (board.placePiece(p, emptyRow, emptyCol)) {
+                if (solve(board, piecesShapes, index + 1)) {
+                    return true;
+                }
+
+                board.removePiece(p, emptyRow, emptyCol);
+            }
+        }
+
+        return false;
+    }
+
+    private int[] findEmptySlot(Board board) {
+        for (int i = 0; i < board.getRow(); i++) {
+            for (int j = 0; j < board.getCol(); j++) {
+                if (board.getBoard()[i][j] == '.') {
+                    return new int[]{i, j};
+                }
+            }
+        }
+
+        return null;
     }
 }
