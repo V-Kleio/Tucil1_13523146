@@ -1,49 +1,62 @@
 package iq_puzzler_pro;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 public class Util {
-    public static Board readBoardFromFile(String filename, Scanner scanner) throws FileNotFoundException {
+    public static Board readBoardFromFile(Scanner scanner) {
         int row = scanner.nextInt();
         int col = scanner.nextInt();
 
         return new Board(row, col);
     }
 
-    public static Piece readPieceFromFile(String filename, Scanner scanner) throws FileNotFoundException {
-        String line = "";
+    public static List<Piece> readPieceFromFile(Scanner scanner, int pieceCount) {
+        List<String> allLines = new ArrayList<>();
         while (scanner.hasNextLine()) {
-            line = scanner.nextLine().trim();
+            String line = scanner.nextLine().trim();
             if (!line.isEmpty()) {
-                break;
+                allLines.add(line);
             }
         }
 
-        if (line.isEmpty()) {
-            return null;
-        }
+        List<Piece> pieces = new ArrayList<>();
+        int i = 0;
+        
+        while (i < allLines.size() && pieces.size() < pieceCount) {
+            List<String> shapeLines = new ArrayList<>();
+            char letter = allLines.get(i).charAt(0);
+            shapeLines.add(allLines.get(i));
+            i++;
 
-        List<String> shapeLines = new ArrayList<>();
-        shapeLines.add(line);
-
-        while (scanner.hasNextLine()) {
-            String nextLine = scanner.nextLine();
-            if (nextLine.trim().isEmpty()) {
-                break;
+            while (i < allLines.size() && allLines.get(i).charAt(0) == letter) {
+                shapeLines.add(allLines.get(i));
+                i++;
             }
-            shapeLines.add(nextLine);
+
+            int pieceRow = shapeLines.size();
+            int pieceCol = 0;
+            for (String line : shapeLines) {
+                if (line.length() > pieceCol) {
+                    pieceCol = line.length();
+                }
+            }
+
+            char[][] shape = new char[pieceRow][pieceCol];
+            for (int j = 0; j < pieceRow; j++) {
+                String currentLine = shapeLines.get(j);
+                for (int k = 0; k < pieceCol; k++) {
+                    if (k < currentLine.length()) {
+                        shape[j][k] = currentLine.charAt(k);
+                    } else {
+                        shape[j][k] = '.';
+                    }
+                }
+            }
+            pieces.add(new Piece(shape));
         }
 
-        int pieceRow = shapeLines.size();
-        int pieceCol = shapeLines.get(0).length();
-        char[][] shape = new char[pieceRow][pieceCol];
-        for (int i = 0; i < pieceRow; i++) {
-            shape[i] = shapeLines.get(i).toCharArray();
-        }
-
-        return new Piece(shape);
+        return pieces;
     }
 }
