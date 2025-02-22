@@ -19,14 +19,5 @@ public class Main {
         } catch (FileNotFoundException e) {
             System.out.println("File Not Found: " + e.getMessage());
         }
-
-        if (pieces != null) {
-            board.placePiece(pieces.get(0), 0, 0);
-            board.placePiece(pieces.get(1), 0, 2);
-            board.placePiece(pieces.get(2), 0, 4);
-            board.placePiece(pieces.get(3), 0, 6);
-            board.placePiece(pieces.get(4), 0, 8);
-            board.printBoard();
-        }
     }
 }
