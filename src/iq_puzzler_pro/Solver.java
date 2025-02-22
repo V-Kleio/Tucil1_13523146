@@ -15,7 +15,7 @@ public class Solver {
         }
 
         long startTime = System.nanoTime();
-        boolean solved = solve(board, piecesShapes, 0);
+        boolean solved = solve(board, piecesShapes);
         long endTime = System.nanoTime();
         
         System.out.println("Waktu pencarian: " + ((endTime - startTime) / 1000000.0) + " ms");
@@ -79,9 +79,9 @@ public class Solver {
         return false;
     }
 
-    private boolean solve(Board board, List<List<Piece>> piecesShapes, int index) {
-        // * Index >= piecesShapes, then all pieces have been placed
-        if (index >= piecesShapes.size()) {
+    private boolean solve(Board board, List<List<Piece>> piecesShapes) {
+        // * If pieceShapes is empty, then there is no more piece to place 
+        if (piecesShapes.isEmpty()) {
             return true;
         }
 
@@ -94,14 +94,22 @@ public class Solver {
         int emptyRow = emptySlot[0];
         int emptyCol = emptySlot[1];
 
-        for (Piece p : piecesShapes.get(index)) {
-            attempts++;
-            if (board.placePiece(p, emptyRow, emptyCol)) {
-                if (solve(board, piecesShapes, index + 1)) {
-                    return true;
+        for (int i = 0; i < piecesShapes.size(); i++) {
+            List<Piece> orientations = piecesShapes.get(i);
+
+            for (Piece p : orientations) {
+                attempts++;
+                if (board.placePiece(p, emptyRow, emptyCol)) {
+                    List<List<Piece>> remaining = new ArrayList<>(piecesShapes);
+                    remaining.remove(i);
+
+                    if (solve(board, remaining)) {
+                        return true;
+                    }
+                    
+                    board.removePiece(p, emptyRow, emptyCol);
                 }
 
-                board.removePiece(p, emptyRow, emptyCol);
             }
         }
 
