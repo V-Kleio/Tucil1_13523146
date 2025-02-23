@@ -7,29 +7,39 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        Board board = null;
-        List<Piece> pieces = null;
+        Board board;
+        List<Piece> pieces;
+
+        System.out.println("=======================================");
+        System.out.println("Selamat datang di IQ Puzzler Pro Solver");
+        System.out.println("=======================================");
+        System.out.println();
 
         try (Scanner terminalInput = new Scanner(System.in)) {
-            System.out.print("Masukkan nama file konfigurasi: ");
+            System.out.print("Masukkan nama file konfigurasi (txt file): ");
             String file = terminalInput.nextLine();
 
             try {
-                Scanner scanner = new Scanner(new File(file));
-                board = Util.readBoardFromFile(scanner);
-                int pieceCount = scanner.nextInt();
-                pieces = Util.readPieceFromFile(scanner, pieceCount);
-                System.out.println("File successfully parsed");
+                Scanner fileScanner = new Scanner(new File(file));
+                board = Util.readBoardFromFile(fileScanner);
+                int pieceCount = fileScanner.nextInt();
+                pieces = Util.readPieceFromFile(fileScanner, pieceCount);
+                System.out.println();
+                System.out.println("File berhasil diproses.");
+                System.out.println();
+                System.out.println("=======================================");
+                System.out.println();
             } catch (FileNotFoundException e) {
-                System.out.println("File Not Found: " + e.getMessage());
+                System.out.println("File " + e.getMessage() + " tidak ditemukan, tulis nama file lengkap dengan ekstensi txt dan pastikan file ada.");
+                return;
             }
         }
         Solver solver = new Solver();
         if (solver.findSolution(board, pieces)) {
             board.printBoard();
-            System.out.println("Berhasil anjay tapi belum diwarnain");
+            System.out.println("Solusi berhasil ditemukan!");
         } else {
-            System.out.println("Gagal anjay kayaknya gak ada solusi");
+            System.out.println("Tidak ada solusi yang ditemukan berdasarkan konfigurasi yang diberikan.");
         }
     }
 }
