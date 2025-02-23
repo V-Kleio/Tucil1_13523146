@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Main {
+    @SuppressWarnings("ConvertToTryWithResources")
+    // Suppress so that the IDE doesnt tell me to put the input scanner inside a try block
     public static void main(String[] args) {
         Board board;
         List<Piece> pieces;
@@ -21,8 +23,11 @@ public class Main {
 
         try {
             Scanner fileScanner = new Scanner(new File(file));
-            board = Util.readBoardFromFile(fileScanner);
+            int row = fileScanner.nextInt();
+            int col = fileScanner.nextInt();
             int pieceCount = fileScanner.nextInt();
+            fileScanner.nextLine(); // go to next line after the reading of N M P
+            board = Util.readBoardFromFile(fileScanner, row, col);
             pieces = Util.readPieceFromFile(fileScanner, pieceCount);
             System.out.println();
             System.out.println("File berhasil diproses.");

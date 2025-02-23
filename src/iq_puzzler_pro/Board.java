@@ -49,6 +49,12 @@ public class Board {
         }
     }
 
+    public Board(char[][] customBoard) {
+        this.row = customBoard.length;
+        this.col = customBoard[0].length;
+        this.board = customBoard;
+    }
+
     public int getRow() {
         return row;
     }
@@ -61,42 +67,73 @@ public class Board {
         return board;
     }
 
-    public boolean placePiece(Piece piece, int startRow, int startCol) {
+    public int[] placePiece(Piece piece, int boardRow, int boardCol) {
         char[][] shape = piece.getShape();
-        
-        // * Check if the piece can be placed in startRow and startCol coordinates
-        for (int i = 0; i < piece.getRow(); i++) {
-            for (int j = 0; j < piece.getCol(); j++) {
-                if (shape[i][j] != '.') {
-                    int boardRow = startRow + i;
-                    int boardCol = startCol + j;
-                    if (boardRow >= row || boardCol >= col || board[boardRow][boardCol] != '.') {
-                        // ! Check out of bounds and overlapped
-                        return false;
+        int pieceRows = piece.getRow();
+        int pieceCols = piece.getCol();
+
+        for (int charRow = 0; charRow < pieceRows; charRow++) {
+            for (int charCol = 0; charCol < pieceCols; charCol++) {
+                // * Find coordinates of char in the piece
+                if (shape[charRow][charCol] == '.') {
+                    continue;
+                }
+
+                // * Find the offset
+                // * Offset is the board coordinates that align with the piece [0,0]
+                int offsetRow = boardRow - charRow;
+                int offsetCol = boardCol - charCol;
+                boolean canPlace = true;
+
+                // * Iterate through the board starting from the offset coordinates
+                // * Compare it with the piece from [0,0] to check for validity
+                // * Valid -> within the board and not overlapped (dots represent empty slot)
+                for (int i = 0; i < pieceRows && canPlace; i++) {
+                    for (int j = 0; j < pieceCols; j++) {
+                        if (shape[i][j] != '.') {
+                            int offsetRowPointer = offsetRow + i;
+                            int offsetColPointer = offsetCol + j;
+                            if (offsetRowPointer < 0 || offsetRowPointer >= this.row || offsetColPointer < 0 || offsetColPointer >= this.col || board[offsetRowPointer][offsetColPointer] != '.') {
+                                canPlace = false;
+                                break;
+                            }
+                        }
                     }
                 }
-            }
-        }
 
-        // * piece can be placed
-        for (int i = 0; i < piece.getRow(); i++) {
-            for (int j = 0; j < piece.getCol(); j++) {
-                if (shape[i][j] != '.') {
-                    board[startRow + i][startCol + j] = shape[i][j];
+                // * Iterate again to replace the board with the piece
+                if (canPlace) {
+                    for (int i = 0; i < pieceRows; i++) {
+                        for (int j = 0; j < pieceCols; j++) {
+                            if (shape[i][j] != '.') {
+                                board[offsetRow + i][offsetCol + j] = shape[i][j];
+                            }
+                        }
+                    }
+                    return new int[]{offsetRow, offsetCol}; // ! Offset is also needed for removing the piece
                 }
             }
         }
 
-        return true;
+        return null; // ! No valid placement
     }
 
-    public void removePiece(Piece piece, int startRow, int startCol) {
-        char[][] shape = piece.getShape();
+    public void removePiece(Piece piece, int[] offset) {
+        if (offset == null) {
+            return;
+        }
 
-        for (int i = 0; i < piece.getRow(); i++) {
-            for (int j = 0; j < piece.getCol(); j++) {
+        int offsetRow = offset[0];
+        int offsetCol = offset[1];
+        char[][] shape = piece.getShape();
+        int pieceRows = piece.getRow();
+        int pieceCols = piece.getCol();
+
+        // * We already know the offset so just replace the alphabet back to dots
+        for (int i = 0; i < pieceRows; i++) {
+            for (int j = 0; j < pieceCols; j++) {
                 if (shape[i][j] != '.') {
-                    board[startRow + i][startCol + j] = '.';
+                    board[offsetRow + i][offsetCol + j] = '.';
                 }
             }
         }
@@ -119,19 +156,15 @@ public class Board {
             for (int j = 0; j < col; j++) {
                 char character = board[i][j];
 
-                if (character == '.') {
-                    System.out.print(character);
+                int characterValue = character - 'A';
+                String color;
+                if (characterValue >= 0 && characterValue < COLORS.length) {
+                    color = COLORS[characterValue];
                 } else {
-                    int characterValue = character - 'A';
-                    String color;
-                    if (characterValue >= 0 && characterValue < COLORS.length) {
-                        color = COLORS[characterValue];
-                    } else {
-                        color = "";
-                    }
-
-                    System.out.print(color + character + RESET);
+                    color = "";
                 }
+
+                System.out.print(color + character + RESET);
             }
             System.out.println();
         }

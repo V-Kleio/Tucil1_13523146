@@ -8,18 +8,44 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Util {
-    public static Board readBoardFromFile(Scanner scanner) {
-        int row = scanner.nextInt();
-        int col = scanner.nextInt();
+    public static Board readBoardFromFile(Scanner scanner, int row, int col) {
+        String boardType = "";
+        if(scanner.hasNextLine()) {
+            boardType = scanner.nextLine().trim();
+        }
 
-        return new Board(row, col);
+        if("CUSTOM".equalsIgnoreCase(boardType)) {
+            char[][] customLayout = new char[row][col];
+            for (int i = 0; i < row; i++) {
+                String line = scanner.nextLine().trim();
+                for (int j = 0; j < col; j++) {
+                    char character = line.charAt(j);
+                    if (character == 'X') {
+                        customLayout[i][j] = '.';
+                    } else {
+                        customLayout[i][j] = ' ';
+                    }
+                }
+            }
+
+            System.out.println("Membuat tipe board custom.");
+            return new Board(customLayout);
+        } else if ("PYRAMID".equalsIgnoreCase(boardType)) {
+            System.out.println("Fitur pyramid tidak diimplementasikan.");
+            System.out.println("Membuat tipe board default.");
+            return new Board(row, col);
+        } else {
+            System.out.println("Membuat tipe board default.");
+            return new Board(row, col);
+        }
+
     }
 
     public static List<Piece> readPieceFromFile(Scanner scanner, int pieceCount) {
         List<String> allLines = new ArrayList<>();
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine();
-            line = line.replaceAll("\\s+$", "");
+            line = line.replaceAll("\\s+$", ""); // ! preserve leading whitespaces and remove trailing whitespaces
             if (!line.isEmpty()) {
                 allLines.add(line);
             }
@@ -30,7 +56,7 @@ public class Util {
         
         while (i < allLines.size() && pieces.size() < pieceCount) {
             List<String> shapeLines = new ArrayList<>();
-            char letter = allLines.get(i).trim().charAt(0);
+            char letter = allLines.get(i).trim().charAt(0); // * Find the alphabet representing a piece
             shapeLines.add(allLines.get(i));
             i++;
 
@@ -39,6 +65,7 @@ public class Util {
                 i++;
             }
 
+            // * In lines with the same alphabet, find the line with the most characters (most column)
             int pieceRow = shapeLines.size();
             int pieceCol = 0;
             for (String line : shapeLines) {
@@ -52,7 +79,7 @@ public class Util {
                 String currentLine = shapeLines.get(j);
                 for (int k = 0; k < pieceCol; k++) {
                     if (k < currentLine.length()) {
-                        shape[j][k] = (currentLine.charAt(k) == ' ') ? '.' : currentLine.charAt(k);
+                        shape[j][k] = (currentLine.charAt(k) == ' ') ? '.' : currentLine.charAt(k); // ! Turn the leading whitespaces into dots
                     } else {
                         shape[j][k] = '.';
                     }

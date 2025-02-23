@@ -91,7 +91,7 @@ public class Solver {
     }
 
     private boolean solve(Board board, List<List<Piece>> piecesShapes) {
-        // * If pieceShapes is empty, then there is no more piece to place 
+        // * If pieceShapes is empty, then there is no more piece to place
         if (piecesShapes.isEmpty()) {
             return (findEmptySlot(board) == null);
         }
@@ -110,15 +110,16 @@ public class Solver {
 
             for (Piece p : orientations) {
                 attempts++;
-                if (board.placePiece(p, emptyRow, emptyCol)) {
+                int[] offset = board.placePiece(p, emptyRow, emptyCol);
+                if (offset != null) {
                     List<List<Piece>> remaining = new ArrayList<>(piecesShapes);
                     remaining.remove(i);
 
                     if (solve(board, remaining)) {
                         return true;
                     }
-                    
-                    board.removePiece(p, emptyRow, emptyCol);
+
+                    board.removePiece(p, offset);
                 }
 
             }
@@ -128,6 +129,7 @@ public class Solver {
     }
 
     private int[] findEmptySlot(Board board) {
+        // * Find the top-leftmost empty slot
         for (int i = 0; i < board.getRow(); i++) {
             for (int j = 0; j < board.getCol(); j++) {
                 if (board.getBoard()[i][j] == '.') {
