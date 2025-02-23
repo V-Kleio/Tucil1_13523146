@@ -1,6 +1,37 @@
 package iq_puzzler_pro;
 
 public class Board {
+    private static final String RESET = "\u001B[0m";
+
+    private static final String[] COLORS = {
+        "\u001B[101m",
+        "\u001B[102m",
+        "\u001B[103m",
+        "\u001B[104m",
+        "\u001B[105m",
+        "\u001B[106m",
+        "\u001B[41m",
+        "\u001B[42m",
+        "\u001B[43m",
+        "\u001B[44m",
+        "\u001B[45m",
+        "\u001B[46m",
+        "\u001B[91m",
+        "\u001B[92m",
+        "\u001B[93m",
+        "\u001B[94m",
+        "\u001B[95m",
+        "\u001B[96m",
+        "\u001B[1;91m",
+        "\u001B[1;92m",
+        "\u001B[1;93m",
+        "\u001B[1;94m",
+        "\u001B[1;95m",
+        "\u001B[1;96m",
+        "\u001B[4;31m",
+        "\u001B[4;32m"
+    };
+
     private final char[][] board;
     private final int row;
     private final int col;
@@ -86,7 +117,21 @@ public class Board {
     public void printBoard() {
         for (int i = 0; i < row; i++) {
             for (int j = 0; j < col; j++) {
-                System.out.print(board[i][j]);
+                char character = board[i][j];
+
+                if (character == '.') {
+                    System.out.print(character);
+                } else {
+                    int characterValue = character - 'A';
+                    String color;
+                    if (characterValue >= 0 && characterValue < COLORS.length) {
+                        color = COLORS[characterValue];
+                    } else {
+                        color = "";
+                    }
+
+                    System.out.print(color + character + RESET);
+                }
             }
             System.out.println();
         }
