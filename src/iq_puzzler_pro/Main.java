@@ -77,6 +77,22 @@ public class Main {
             Util.saveResult(save, solver, solved, board);
         }
 
+        if (solved) {
+            System.out.println();
+            System.out.print("Apakah anda ingin menyimpan solusi sebagai gambar? (ya/tidak) ");
+            save = input.nextLine().trim();
+            while (!("ya".equalsIgnoreCase(save) || "tidak".equalsIgnoreCase(save))) {
+                System.out.println("\u001B[1;91mPerintah invalid\u001B[0m");
+                System.out.print("Apakah anda ingin menyimpan solusi sebagai gambar? (ya/tidak) ");
+                save = input.nextLine().trim();
+            }
+            if ("ya".equalsIgnoreCase(save)) {
+                System.out.print("Masukkan nama file (tanpa ekstensi file): ");
+                save = input.nextLine().trim();
+                Util.saveSolutionAsImage(board, save);
+            }
+        }
+
         input.close();
     }
 }

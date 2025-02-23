@@ -1,13 +1,48 @@
 package iq_puzzler_pro;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import javax.imageio.ImageIO;
 
 public class Util {
+    // * Color generated randomly using https://mokole.com/palette.html
+    private static final Color[] COLORS = {
+        new Color(211, 211, 211),
+        new Color(47, 79, 79),
+        new Color(139, 69, 19),
+        new Color(34, 139, 24),
+        new Color(128, 128, 0),
+        new Color(72, 61, 139),
+        new Color(0, 0, 128),
+        new Color(154, 205, 50),
+        new Color(102, 205, 170),
+        new Color(255, 0, 0),
+        new Color(255, 165, 0),
+        new Color(255, 255, 0),
+        new Color(124, 252, 0),
+        new Color(0, 250, 154),
+        new Color(138, 43, 226),
+        new Color(139, 0, 139),
+        new Color(220, 20, 60),
+        new Color(0, 191, 255),
+        new Color(0, 0, 255),
+        new Color(255, 127, 80),
+        new Color(255, 0, 255),
+        new Color(30, 144, 255),
+        new Color(219, 112, 147),
+        new Color(240, 230, 140),
+        new Color(255, 20, 147),
+        new Color(238, 130, 238)
+    };
+
     public static Board readBoardFromFile(Scanner scanner, int row, int col) {
         String boardType = "";
         if(scanner.hasNextLine()) {
@@ -168,5 +203,49 @@ public class Util {
             return false;
         }
         return true;
+    }
+
+    public static void saveSolutionAsImage(Board board, String filename) {
+        int size = 40;
+        int row = board.getRow();
+        int col = board.getCol();
+        int width = col * size;
+        int height = row * size;
+
+        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D graphic = image.createGraphics();
+
+        graphic.setColor(Color.WHITE);
+        graphic.fillRect(0, 0, width, height);
+
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                int x = j * size;
+                int y = i * size;
+
+                // * Square outline
+                graphic.setColor(Color.LIGHT_GRAY);
+                graphic.drawRect(x, y, size, size);
+
+                char character = board.getBoard()[i][j];
+                int characterValue = character - 'A';
+                if (characterValue >= 0 && characterValue < COLORS.length) {
+                    graphic.setColor(COLORS[characterValue]);
+                } else {
+                    graphic.setColor(Color.BLACK);
+                }
+
+                graphic.fillRect(x, y, size, size);
+            }
+        }
+
+        graphic.dispose();
+
+        try {
+            ImageIO.write(image, "png", new File("test/image/" + filename + ".png"));
+            System.err.println("Berhasil menyimpan solusi sebagai gambar: " + filename + ".png");
+        } catch (IOException e) {
+            System.out.println("Gagal menyimpan solusi sebagai gambar.\n" + e.getMessage());
+        }
     }
 }
