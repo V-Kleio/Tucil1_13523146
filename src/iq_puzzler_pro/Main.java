@@ -9,37 +9,55 @@ public class Main {
     public static void main(String[] args) {
         Board board;
         List<Piece> pieces;
+        Scanner input = new Scanner(System.in);
 
         System.out.println("=======================================");
         System.out.println("Selamat datang di IQ Puzzler Pro Solver");
         System.out.println("=======================================");
         System.out.println();
 
-        try (Scanner terminalInput = new Scanner(System.in)) {
-            System.out.print("Masukkan nama file konfigurasi (txt file): ");
-            String file = terminalInput.nextLine();
+        System.out.print("Masukkan nama file konfigurasi (txt file): ");
+        String file = input.nextLine().trim();
 
-            try {
-                Scanner fileScanner = new Scanner(new File(file));
-                board = Util.readBoardFromFile(fileScanner);
-                int pieceCount = fileScanner.nextInt();
-                pieces = Util.readPieceFromFile(fileScanner, pieceCount);
-                System.out.println();
-                System.out.println("File berhasil diproses.");
-                System.out.println();
-                System.out.println("=======================================");
-                System.out.println();
-            } catch (FileNotFoundException e) {
-                System.out.println("File " + e.getMessage() + " tidak ditemukan, tulis nama file lengkap dengan ekstensi txt dan pastikan file ada.");
-                return;
-            }
+        try {
+            Scanner fileScanner = new Scanner(new File(file));
+            board = Util.readBoardFromFile(fileScanner);
+            int pieceCount = fileScanner.nextInt();
+            pieces = Util.readPieceFromFile(fileScanner, pieceCount);
+            System.out.println();
+            System.out.println("File berhasil diproses.");
+            System.out.println();
+            System.out.println("=======================================");
+            System.out.println();
+        } catch (FileNotFoundException e) {
+            System.out.println("File " + e.getMessage() + " tidak ditemukan, tulis nama file lengkap dengan ekstensi txt dan pastikan file ada.");
+            input.close();
+            return;
         }
+    
         Solver solver = new Solver();
-        if (solver.findSolution(board, pieces)) {
+        boolean solved = solver.findSolution(board, pieces);
+        if (solved) {
             board.printBoard();
             System.out.println("Solusi berhasil ditemukan!");
         } else {
             System.out.println("Tidak ada solusi yang ditemukan berdasarkan konfigurasi yang diberikan.");
         }
+
+        System.out.println();
+        System.out.print("Apakah anda ingin menyimpan solusi? (ya/tidak) ");
+        String save = input.nextLine().trim();
+        while (!("ya".equalsIgnoreCase(save) || "tidak".equalsIgnoreCase(save))) {
+            System.out.println("Perintah invalid");
+            System.out.print("Apakah anda ingin menyimpan solusi? (ya/tidak) ");
+            save = input.nextLine().trim();
+        }
+        if ("ya".equalsIgnoreCase(save)) {
+            System.out.print("Masukkan nama file (tanpa ekstensi file): ");
+            save = input.nextLine().trim();
+            Util.saveResult(save, solver, solved, board);
+        }
+
+        input.close();
     }
 }

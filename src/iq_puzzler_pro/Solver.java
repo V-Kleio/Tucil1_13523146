@@ -3,7 +3,16 @@ package iq_puzzler_pro;
 import java.util.ArrayList;
 import java.util.List;
 public class Solver {
-    private int attempts = 0;
+    private long attempts = 0;
+    private double time = 0.0;
+
+    public long getAttempts() {
+        return attempts;
+    }
+
+    public double getTime() {
+        return time;
+    }
 
     public boolean findSolution(Board board, List<Piece> pieces) {
         // * Store every piece in a list
@@ -17,8 +26,10 @@ public class Solver {
         long startTime = System.nanoTime();
         boolean solved = solve(board, piecesShapes);
         long endTime = System.nanoTime();
+
+        time = (endTime - startTime) / 1000000.0;
         
-        System.out.println("Waktu pencarian: " + ((endTime - startTime) / 1000000.0) + " ms");
+        System.out.println("Waktu pencarian: " + time + " ms");
         System.out.println("Banyak kasus yang ditinjau: " + attempts);
 
         return solved;

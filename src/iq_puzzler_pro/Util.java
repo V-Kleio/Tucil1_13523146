@@ -1,5 +1,8 @@
 package iq_puzzler_pro;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -59,5 +62,27 @@ public class Util {
         }
 
         return pieces;
+    }
+
+    public static void saveResult(String filename, Solver solver, boolean solved, Board board) {
+        try (PrintWriter writer = new PrintWriter(new FileWriter("test/" + filename + ".txt"))) {
+            writer.println("Waktu pencarian: " + solver.getTime() + " ms");
+            writer.println("Banyak kasus yang ditinjau: " + solver.getAttempts() + " kasus");
+            writer.println();
+
+            if (solved) {
+                writer.println("Solusi:");
+                for (int i = 0; i < board.getRow(); i++) {
+                    for (int j = 0; j < board.getCol(); j++) {
+                        writer.print(board.getBoard()[i][j]);
+                    }
+                    writer.println();
+                }
+            } else {
+                writer.println("Tidak ada solusi yang ditemukan.");
+            }
+        } catch (IOException e) {
+            System.out.println("Terjadi kesalahan saat menyimpan file: " + e.getMessage());
+        }
     }
 }
