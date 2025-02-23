@@ -7,7 +7,7 @@ import java.util.Scanner;
 
 public class Main {
     @SuppressWarnings("ConvertToTryWithResources")
-    // Suppress so that the IDE doesnt tell me to put the input scanner inside a try block
+    // ! Suppress so that the IDE doesnt tell me to put the input scanner inside a try block
     public static void main(String[] args) {
         Board board;
         List<Piece> pieces;
@@ -23,10 +23,19 @@ public class Main {
 
         try {
             Scanner fileScanner = new Scanner(new File(file));
+            if (!Util.validateConfigFile(fileScanner)) {
+                System.out.println("\u001B[1;91mKonfigurasi file tidak valid.");
+                input.close();
+                return;
+            }
+
+            fileScanner.close();
+            fileScanner = new Scanner(new File(file));
+
             int row = fileScanner.nextInt();
             int col = fileScanner.nextInt();
             int pieceCount = fileScanner.nextInt();
-            fileScanner.nextLine(); // go to next line after the reading of N M P
+            fileScanner.nextLine(); // * go to next line after the reading of N M P
             board = Util.readBoardFromFile(fileScanner, row, col);
             pieces = Util.readPieceFromFile(fileScanner, pieceCount);
             System.out.println();
@@ -35,7 +44,12 @@ public class Main {
             System.out.println("=======================================");
             System.out.println();
         } catch (FileNotFoundException e) {
-            System.out.println("File " + e.getMessage() + " tidak ditemukan, tulis nama file lengkap dengan ekstensi txt dan pastikan file ada.");
+            System.out.println("\u001B[1;91mFile tidak ditemukan, tulis nama file lengkap dengan ekstensi txt dan pastikan file ada.\n" + e.getMessage());
+            input.close();
+            return;
+        }
+
+        if (pieces == null) {
             input.close();
             return;
         }
@@ -53,7 +67,7 @@ public class Main {
         System.out.print("Apakah anda ingin menyimpan solusi? (ya/tidak) ");
         String save = input.nextLine().trim();
         while (!("ya".equalsIgnoreCase(save) || "tidak".equalsIgnoreCase(save))) {
-            System.out.println("Perintah invalid");
+            System.out.println("\u001B[1;91mPerintah invalid\u001B[0m");
             System.out.print("Apakah anda ingin menyimpan solusi? (ya/tidak) ");
             save = input.nextLine().trim();
         }

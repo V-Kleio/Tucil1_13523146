@@ -88,6 +88,11 @@ public class Util {
             pieces.add(new Piece(shape));
         }
 
+        if (pieces.size() != pieceCount) {
+            System.out.println("\u001B[1;91mBanyak blok puzzle tidak valid.");
+            return null;
+        }
+
         return pieces;
     }
 
@@ -109,7 +114,59 @@ public class Util {
                 writer.println("Tidak ada solusi yang ditemukan.");
             }
         } catch (IOException e) {
-            System.out.println("Terjadi kesalahan saat menyimpan file: " + e.getMessage());
+            System.out.println("\u001B[1;91mTerjadi kesalahan saat menyimpan file: " + e.getMessage());
         }
+    }
+
+    public static boolean validateConfigFile(Scanner scanner) {
+        try {
+            // ! Check for dimension and piece count
+            int row = scanner.nextInt();
+            int col = scanner.nextInt();
+            int pieceCount = scanner.nextInt();
+
+            if (row <= 0 || col <= 0 || pieceCount <= 0 || pieceCount > 26) {
+                System.out.println("\u001B[1;91mDimensi atau banyak blok puzzle tidak valid.");
+                return false;
+            }
+            scanner.nextLine();
+
+            // ! Check for board type
+            if (!scanner.hasNextLine()) {
+                System.out.println("\u001B[1;91mJenis Kasus tidak ditemukan.");
+                return false;
+            }
+            String boardType = scanner.nextLine().trim();
+            if ("CUSTOM".equalsIgnoreCase(boardType)) {
+                // ! Check for custom board configuration
+                for (int i = 0; i < row; i++) {
+                    if (!scanner.hasNextLine()) {
+                        System.out.println("\u001B[1;91mJumlah baris tidak sesuai dengan dimensi.");
+                        return false;
+                    }
+                    String line = scanner.nextLine().trim();
+                    if (line.length() < col) {
+                        System.out.println("\u001B[1;91mJumlah kolom tidak sesuai dengan dimensi.");
+                        return false;
+                    }
+                }
+            } else if ("DEFAULT".equalsIgnoreCase(boardType)) {
+                System.out.print("");
+            } else if ("PYRAMID".equalsIgnoreCase(boardType)) {
+                System.out.println("Jenis kasus pyramid tidak diimplementasikan. Board menjadi default.");
+            } else {
+                System.out.println("\u001B[1;91mJenis kasus tidak dikenali");
+                return false;
+            }
+
+            if (!scanner.hasNextLine()) {
+                System.out.println("\u001B[1;91mKonfigurasi blok puzzle tidak ditemukan.");
+                return false;
+            }
+        } catch (Exception e) {
+            System.out.println("\u001B[1;91mFormat file tidak valid.");
+            return false;
+        }
+        return true;
     }
 }
