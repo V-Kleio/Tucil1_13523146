@@ -82,13 +82,13 @@ public class Solver {
     private boolean solve(Board board, List<List<Piece>> piecesShapes) {
         // * If pieceShapes is empty, then there is no more piece to place 
         if (piecesShapes.isEmpty()) {
-            return true;
+            return (findEmptySlot(board) == null);
         }
 
         // * Find empty slot
         int[] emptySlot = findEmptySlot(board);
         if (emptySlot == null) {
-            return true; // * No empty slot
+            return false;
         }
 
         int emptyRow = emptySlot[0];

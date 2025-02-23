@@ -7,19 +7,23 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Akhirnya ngerjain stima!!!");
         Board board = null;
         List<Piece> pieces = null;
 
-        try {
-            Scanner scanner = new Scanner(new File("tes.txt"));
-            board = Util.readBoardFromFile(scanner);
-            int pieceCount = scanner.nextInt();
-            pieces = Util.readPieceFromFile(scanner, pieceCount);
-        } catch (FileNotFoundException e) {
-            System.out.println("File Not Found: " + e.getMessage());
-        }
+        try (Scanner terminalInput = new Scanner(System.in)) {
+            System.out.print("Masukkan nama file konfigurasi: ");
+            String file = terminalInput.nextLine();
 
+            try {
+                Scanner scanner = new Scanner(new File(file));
+                board = Util.readBoardFromFile(scanner);
+                int pieceCount = scanner.nextInt();
+                pieces = Util.readPieceFromFile(scanner, pieceCount);
+                System.out.println("File successfully parsed");
+            } catch (FileNotFoundException e) {
+                System.out.println("File Not Found: " + e.getMessage());
+            }
+        }
         Solver solver = new Solver();
         if (solver.findSolution(board, pieces)) {
             board.printBoard();

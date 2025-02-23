@@ -15,7 +15,8 @@ public class Util {
     public static List<Piece> readPieceFromFile(Scanner scanner, int pieceCount) {
         List<String> allLines = new ArrayList<>();
         while (scanner.hasNextLine()) {
-            String line = scanner.nextLine().trim();
+            String line = scanner.nextLine();
+            line = line.replaceAll("\\s+$", "");
             if (!line.isEmpty()) {
                 allLines.add(line);
             }
@@ -26,11 +27,11 @@ public class Util {
         
         while (i < allLines.size() && pieces.size() < pieceCount) {
             List<String> shapeLines = new ArrayList<>();
-            char letter = allLines.get(i).charAt(0);
+            char letter = allLines.get(i).trim().charAt(0);
             shapeLines.add(allLines.get(i));
             i++;
 
-            while (i < allLines.size() && allLines.get(i).charAt(0) == letter) {
+            while (i < allLines.size() && allLines.get(i).trim().charAt(0) == letter) {
                 shapeLines.add(allLines.get(i));
                 i++;
             }
@@ -48,7 +49,7 @@ public class Util {
                 String currentLine = shapeLines.get(j);
                 for (int k = 0; k < pieceCol; k++) {
                     if (k < currentLine.length()) {
-                        shape[j][k] = currentLine.charAt(k);
+                        shape[j][k] = (currentLine.charAt(k) == ' ') ? '.' : currentLine.charAt(k);
                     } else {
                         shape[j][k] = '.';
                     }
